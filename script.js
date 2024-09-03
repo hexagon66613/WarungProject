@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
     };
 
-    fetch('http://localhost:3000/create_transaction', { // Update URL if necessary
+    fetch('https://ideal-goggles-jj46w6xqwj5qhp76g-3000.app.github.dev/create_transaction', { // Update URL if necessary
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
