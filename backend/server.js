@@ -23,20 +23,17 @@ const midtrans = new midtransClient.Snap({
 });
 
 // Endpoint to create a transaction
-app.post('/create_transaction', (req, res) => {
-  const orderDetails = req.body;
+app.post('/create_transaction', async (req, res) => {
+  try {
+    const orderDetails = req.body;
+    console.log('Order Details:', orderDetails);
 
-  // Log order details for debugging
-  console.log('Order Details:', orderDetails);
-
-  midtrans.createTransaction(orderDetails)
-    .then(transaction => {
-      res.json({ token: transaction.token });
-    })
-    .catch(error => {
-      console.error('Transaction Error:', error); // Log error for debugging
-      res.status(500).json({ error: error.message });
-    });
+    const transaction = await midtrans.createTransaction(orderDetails);
+    res.json({ token: transaction.token });
+  } catch (error) {
+    console.error('Transaction Error:', error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.listen(3000, () => {
