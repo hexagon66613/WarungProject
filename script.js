@@ -1,31 +1,55 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // List of products
   const products = [
     { id: 1, name: 'Product 1', price: 10000 },
     { id: 2, name: 'Product 2', price: 20000 },
   ];
 
-  const productList = document.getElementById('product-list');
-  products.forEach(product => {
-    const productItem = document.createElement('div');
-    productItem.innerHTML = `
-      <h3>${product.name}</h3>
-      <p>Price: ${product.price}</p>
-      <button onclick="addToCart(${product.id})">Add to Cart</button>
-    `;
-    productList.appendChild(productItem);
-  });
+  // Cart to keep track of added products
+  let cart = [];
 
-  window.addToCart = (productId) => {
-    // Add product to cart logic
-    alert('Product added to cart!');
+  // Function to display products
+  const displayProducts = () => {
+    const productList = document.getElementById('product-list');
+    productList.innerHTML = ''; // Clear existing products
+
+    products.forEach(product => {
+      const productItem = document.createElement('div');
+      productItem.innerHTML = `
+        <h3>${product.name}</h3>
+        <p>Price: ${product.price}</p>
+        <button onclick="addToCart(${product.id})">Add to Cart</button>
+      `;
+      productList.appendChild(productItem);
+    });
   };
 
+  // Function to add products to cart
+  window.addToCart = (productId) => {
+    const product = products.find(p => p.id === productId);
+    if (product) {
+      cart.push(product);
+      alert(`${product.name} added to cart!`);
+    }
+  };
+
+  // Function to calculate total amount
+  const calculateTotalAmount = () => {
+    return cart.reduce((total, product) => total + product.price, 0);
+  };
+
+  // Event listener for checkout button
   document.getElementById('checkout').addEventListener('click', () => {
-    // Example of order details
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+
+    const totalAmount = calculateTotalAmount();
     const orderDetails = {
       transaction_details: {
         order_id: 'order-id-' + new Date().getTime(),
-        gross_amount: 20000, // Total amount to be paid
+        gross_amount: totalAmount, // Total amount to be paid
       },
       credit_card: {
         secure: true,
@@ -42,7 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
     })
     .then(response => response.json())
     .then(data => {
-      snap.pay(data.token); // Initiate payment
+      snap.pay(data.token); // Initiate payment using Midtrans Snap
+    })
+    .catch(error => {
+      console.error('Error:', error);
     });
   });
+
+  // Initialize products on page load
+  displayProducts();
 });
