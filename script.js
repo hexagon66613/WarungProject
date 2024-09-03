@@ -1,17 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // List of products
   const products = [
     { id: 1, name: 'Product 1', price: 10000 },
     { id: 2, name: 'Product 2', price: 20000 },
   ];
 
-  // Cart to keep track of added products
   let cart = [];
 
-  // Function to display products
   const displayProducts = () => {
     const productList = document.getElementById('product-list');
-    productList.innerHTML = ''; // Clear existing products
+    productList.innerHTML = '';
 
     products.forEach(product => {
       const productItem = document.createElement('div');
@@ -24,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // Function to add products to cart
   window.addToCart = (productId) => {
     const product = products.find(p => p.id === productId);
     if (product) {
@@ -33,12 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Function to calculate total amount
   const calculateTotalAmount = () => {
     return cart.reduce((total, product) => total + product.price, 0);
   };
 
-  // Event listener for checkout button
   document.getElementById('checkout').addEventListener('click', () => {
     if (cart.length === 0) {
       alert('Your cart is empty!');
@@ -49,30 +43,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const orderDetails = {
       transaction_details: {
         order_id: 'order-id-' + new Date().getTime(),
-        gross_amount: totalAmount, // Total amount to be paid
+        gross_amount: totalAmount,
       },
       credit_card: {
         secure: true,
       },
     };
 
-    // Make an API call to your backend to get a token
-    fetch('/create_transaction', {
+    fetch('http://localhost:3000/create_transaction', { // Update URL if necessary
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(orderDetails),
     })
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
     .then(data => {
-      snap.pay(data.token); // Initiate payment using Midtrans Snap
+      if (data.token) {
+        snap.pay(data.token);
+      } else {
+        throw new Error('No token received');
+      }
     })
     .catch(error => {
       console.error('Error:', error);
     });
   });
 
-  // Initialize products on page load
   displayProducts();
 });
