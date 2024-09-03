@@ -24,11 +24,15 @@ const midtrans = new midtransClient.Snap({
 app.post('/create_transaction', (req, res) => {
   const orderDetails = req.body;
 
+  // Log order details for debugging
+  console.log('Order Details:', orderDetails);
+
   midtrans.createTransaction(orderDetails)
     .then(transaction => {
       res.json({ token: transaction.token });
     })
     .catch(error => {
+      console.error('Transaction Error:', error); // Log error for debugging
       res.status(500).json({ error: error.message });
     });
 });
