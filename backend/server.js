@@ -7,7 +7,7 @@ app.use(bodyParser.json());
 
 const midtrans = new midtransClient.Snap({
   isProduction: false, // Set to true for production
-  serverKey: 'YOUR_SERVER_KEY',
+  serverKey: 'Mid-server-9t2QptoETl-V08RbEVTuEKV0',
 });
 
 app.post('/create_transaction', (req, res) => {
