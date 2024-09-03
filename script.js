@@ -21,7 +21,28 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   document.getElementById('checkout').addEventListener('click', () => {
-    // Handle checkout
-    alert('Proceeding to checkout!');
+    // Example of order details
+    const orderDetails = {
+      transaction_details: {
+        order_id: 'order-id-' + new Date().getTime(),
+        gross_amount: 20000, // Total amount to be paid
+      },
+      credit_card: {
+        secure: true,
+      },
+    };
+
+    // Make an API call to your backend to get a token
+    fetch('/create_transaction', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(orderDetails),
+    })
+    .then(response => response.json())
+    .then(data => {
+      snap.pay(data.token); // Initiate payment
+    });
   });
 });
