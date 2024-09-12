@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 
 // Initialize Midtrans client
 const midtrans = new midtransClient.Snap({
-  isProduction: false, // Set to true for production
+  isProduction: true, // Set to true for production
   serverKey: 'Mid-server-9t2QptoETl-V08RbEVTuEKV0', // Replace with your actual server key
 });
 
