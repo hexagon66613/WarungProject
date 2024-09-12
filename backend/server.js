@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
 // Initialize Midtrans client
 const midtrans = new midtransClient.Snap({
   isProduction: false, // Set to true for production
-  serverKey: 'Mid-server-9t2QptoETl-V08RbEVTuEKV0', // Replace with your server key
+  serverKey: 'Mid-server-9t2QptoETl-V08RbEVTuEKV0', // Replace with your actual server key
 });
 
 // Endpoint to create a transaction
@@ -35,6 +35,7 @@ app.post('/create_transaction', async (req, res) => {
     const orderDetails = req.body;
     console.log('Order Details:', orderDetails);
 
+    // Remove or adjust fields based on your payment method configuration
     const transaction = await midtrans.createTransaction(orderDetails);
     res.json({ token: transaction.token });
   } catch (error) {
