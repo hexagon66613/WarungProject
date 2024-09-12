@@ -6,7 +6,14 @@ const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
-app.use(cors()); // Enable CORS
+
+// Configure CORS with options
+const corsOptions = {
+  origin: 'https://hexagon66613.github.io', // Your frontend domain
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
+};
+app.use(cors(corsOptions));
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, 'public')));
