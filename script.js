@@ -51,9 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
         order_id: 'order-id-' + new Date().getTime(),
         gross_amount: totalAmount, // Total amount to be paid
       },
-      credit_card: {
-        secure: true,
-      },
+      // Remove or adjust according to your payment methods
     };
 
     // Make an API call to your backend to get a token
