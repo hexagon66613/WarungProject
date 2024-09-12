@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Make an API call to your backend to get a token
-    fetch('https://vigilant-cod-7vrq4qgp4rvjfj49-3000.app.github.dev/create_transaction', {
+    fetch('https://vigilant-cod-7vrq4qgp4rvjfj49-3000.app.github.dev', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
