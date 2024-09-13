@@ -1,49 +1,62 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const midtransClient = require('midtrans-client');
-const path = require('path');
-const cors = require('cors');
+const http = require('http');
+const socketIo = require('socket.io');
+const mongoose = require('mongoose');
+const Product = require('./models/Product'); // Adjust path as needed
 
-const app = express();
-app.use(bodyParser.json());
+const server = http.createServer(app);
+const io = socketIo(server);
 
-// Configure CORS with options
-const corsOptions = {
-  origin: 'https://hexagon66613.github.io', // Your frontend domain
-  methods: ['GET', 'POST'],
-  allowedHeaders: ['Content-Type']
-};
-app.use(cors(corsOptions));
+// WebSocket connection
+io.on('connection', (socket) => {
+  console.log('New client connected');
 
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
+  // Send updated product list to new clients
+  Product.find().then(products => {
+    socket.emit('updateProducts', products);
+  });
 
-// Define a route for the root URL
-app.get('/', (req, res) => {
-  res.send('Welcome to Your Shop API!');
+  // Handle product updates from seller
+  socket.on('updateProduct', async (product) => {
+    try {
+      if (product.id) {
+        // Update existing product
+        const existingProduct = await Product.findById(product.id);
+        if (existingProduct) {
+          existingProduct.name = product.name;
+          existingProduct.price = product.price;
+          await existingProduct.save();
+        } else {
+          throw new Error('Product not found');
+        }
+      } else {
+        // Add new product
+        const newProduct = new Product(product);
+        await newProduct.save();
+      }
+
+      // Notify all clients about the product update
+      io.emit('updateProducts', await Product.find());
+    } catch (error) {
+      socket.emit('error', error.message);
+    }
+  });
+
+  // Handle product deletions from seller
+  socket.on('deleteProduct', async (productId) => {
+    try {
+      await Product.findByIdAndDelete(productId);
+      io.emit('updateProducts', await Product.find());
+    } catch (error) {
+      socket.emit('error', error.message);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
 });
 
-// Initialize Midtrans client
-const midtrans = new midtransClient.Snap({
-  isProduction: true, // Set to true for production
-  serverKey: 'Mid-server-9t2QptoETl-V08RbEVTuEKV0', // Replace with your actual server key
-});
-
-// Endpoint to create a transaction
-app.post('/create_transaction', async (req, res) => {
-  try {
-    const orderDetails = req.body;
-    console.log('Order Details:', orderDetails);
-
-    // Remove or adjust fields based on your payment method configuration
-    const transaction = await midtrans.createTransaction(orderDetails);
-    res.json({ token: transaction.token });
-  } catch (error) {
-    console.error('Transaction Error:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.listen(3000, () => {
+// Start the server
+server.listen(3000, () => {
   console.log('Server running on port 3000');
 });
