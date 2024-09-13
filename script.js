@@ -65,13 +65,30 @@ document.addEventListener('DOMContentLoaded', () => {
       }, {});
 
       const cartContent = Object.values(groupedItems).map(item => `
-        <div>
+        <div id="cart-item-${item.id}">
           <h4>${item.name} x${item.quantity}</h4>
           <p>Price: ${item.price * item.quantity}</p>
+          <button onclick="decreaseQuantity(${item.id})">Decrease Quantity</button>
+          <button onclick="removeItem(${item.id})">Remove Item</button>
         </div>
       `).join('');
       cartItems.innerHTML = cartContent;
     }
+  };
+
+  // Function to decrease quantity of an item
+  window.decreaseQuantity = (productId) => {
+    const itemIndex = cart.findIndex(p => p.id === productId);
+    if (itemIndex !== -1) {
+      cart.splice(itemIndex, 1); // Remove one instance of the item
+      updateCartDisplay(); // Update the cart display
+    }
+  };
+
+  // Function to remove an item completely from the cart
+  window.removeItem = (productId) => {
+    cart = cart.filter(p => p.id !== productId); // Remove all instances of the item
+    updateCartDisplay(); // Update the cart display
   };
 
   // Event listener for checkout button
