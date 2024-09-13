@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Function to display products
   const displayProducts = () => {
     const productList = document.getElementById('product-list');
+    if (!productList) return; // Safeguard if element is not found
+
     productList.innerHTML = ''; // Clear existing products
 
     products.forEach(product => {
@@ -41,20 +43,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Function to update cart display
   const updateCartDisplay = () => {
-    const cartList = document.getElementById('cart-list');
-    cartList.innerHTML = ''; // Clear existing cart items
+    const cartItems = document.getElementById('cart-items');
+    if (!cartItems) return; // Safeguard if element is not found
 
     if (cart.length === 0) {
-      cartList.innerHTML = '<p>No items in cart</p>';
+      cartItems.innerHTML = 'No items in cart';
     } else {
-      cart.forEach(product => {
-        const cartItem = document.createElement('div');
-        cartItem.innerHTML = `
+      const cartContent = cart.map(product => `
+        <div>
           <h4>${product.name}</h4>
           <p>Price: ${product.price}</p>
-        `;
-        cartList.appendChild(cartItem);
-      });
+        </div>
+      `).join('');
+      cartItems.innerHTML = cartContent;
     }
   };
 
