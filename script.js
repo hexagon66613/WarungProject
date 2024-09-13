@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const product = products.find(p => p.id === productId);
     if (product) {
       cart.push(product);
+      updateCartDisplay(); // Update the cart display
       alert(`${product.name} added to cart!`);
     }
   };
@@ -36,6 +37,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Function to calculate total amount
   const calculateTotalAmount = () => {
     return cart.reduce((total, product) => total + product.price, 0);
+  };
+
+  // Function to update cart display
+  const updateCartDisplay = () => {
+    const cartList = document.getElementById('cart-list');
+    cartList.innerHTML = ''; // Clear existing cart items
+
+    if (cart.length === 0) {
+      cartList.innerHTML = '<p>No items in cart</p>';
+    } else {
+      cart.forEach(product => {
+        const cartItem = document.createElement('div');
+        cartItem.innerHTML = `
+          <h4>${product.name}</h4>
+          <p>Price: ${product.price}</p>
+        `;
+        cartList.appendChild(cartItem);
+      });
+    }
   };
 
   // Event listener for checkout button
@@ -80,6 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Initialize products on page load
+  // Initialize products and cart display on page load
   displayProducts();
+  updateCartDisplay();
 });
