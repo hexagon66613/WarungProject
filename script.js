@@ -66,9 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const cartContent = Object.values(groupedItems).map(item => `
         <div id="cart-item-${item.id}">
-          <h4>${item.name} x${item.quantity}</h4>
+          <h4>${item.name} x
+            <input type="number" id="quantity-${item.id}" value="${item.quantity}" min="1" onchange="updateItemQuantity(${item.id})" />
+          </h4>
           <p>Price: ${item.price * item.quantity}</p>
-          <button onclick="decreaseQuantity(${item.id})">Decrease Quantity</button>
           <button onclick="removeItem(${item.id})">Remove Item</button>
         </div>
       `).join('');
@@ -76,11 +77,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Function to decrease quantity of an item
-  window.decreaseQuantity = (productId) => {
+  // Function to update item quantity
+  window.updateItemQuantity = (productId) => {
+    const quantityInput = document.getElementById(`quantity-${productId}`);
+    const newQuantity = parseInt(quantityInput.value, 10) || 1;
+
+    // Find and update the quantity in the cart
     const itemIndex = cart.findIndex(p => p.id === productId);
     if (itemIndex !== -1) {
-      cart.splice(itemIndex, 1); // Remove one instance of the item
+      // Remove all current instances of the product
+      cart = cart.filter(p => p.id !== productId);
+
+      // Add new instances according to the new quantity
+      for (let i = 0; i < newQuantity; i++) {
+        cart.push(products.find(p => p.id === productId));
+      }
       updateCartDisplay(); // Update the cart display
     }
   };
