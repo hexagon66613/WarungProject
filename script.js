@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       productItem.innerHTML = `
         <h3>${product.name}</h3>
         <p>Price: ${product.price}</p>
+        <input type="number" id="quantity-${product.id}" value="1" min="1" />
         <button onclick="addToCart(${product.id})">Add to Cart</button>
       `;
       productList.appendChild(productItem);
@@ -29,10 +30,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Function to add products to cart
   window.addToCart = (productId) => {
     const product = products.find(p => p.id === productId);
+    const quantityInput = document.getElementById(`quantity-${productId}`);
+    const quantity = parseInt(quantityInput.value, 10) || 1; // Default to 1 if not valid
+
     if (product) {
-      cart.push(product);
+      for (let i = 0; i < quantity; i++) {
+        cart.push(product);
+      }
       updateCartDisplay(); // Update the cart display
-      alert(`${product.name} added to cart!`);
+      alert(`${product.name} added to cart with quantity ${quantity}!`);
     }
   };
 
