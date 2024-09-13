@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const cartContent = Object.values(groupedItems).map(item => `
         <div id="cart-item-${item.id}">
           <h4>${item.name} x
-            <input type="number" id="quantity-${item.id}" value="${item.quantity}" min="1" onchange="updateItemQuantity(${item.id})" />
+            <input type="number" id="cart-quantity-${item.id}" value="${item.quantity}" min="1" onchange="updateItemQuantity(${item.id})" />
           </h4>
           <p>Price: ${item.price * item.quantity}</p>
           <button onclick="removeItem(${item.id})">Remove Item</button>
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Function to update item quantity
   window.updateItemQuantity = (productId) => {
-    const quantityInput = document.getElementById(`quantity-${productId}`);
+    const quantityInput = document.getElementById(`cart-quantity-${productId}`);
     const newQuantity = parseInt(quantityInput.value, 10) || 1;
 
     // Find and update the quantity in the cart
@@ -115,36 +115,4 @@ document.addEventListener('DOMContentLoaded', () => {
         order_id: 'order-id-' + new Date().getTime(),
         gross_amount: totalAmount, // Total amount to be paid
       },
-      // Remove or adjust according to your payment methods
-    };
-
-    // Make an API call to your backend to get a token
-    fetch('https://didactic-adventure-4jg494xw97xgc55pw-3000.app.github.dev/create_transaction', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(orderDetails),
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.json();
-    })
-    .then(data => {
-      if (data.token) {
-        snap.pay(data.token); // Initiate payment using Midtrans Snap
-      } else {
-        throw new Error('No token received');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  });
-
-  // Initialize products and cart display on page load
-  displayProducts();
-  updateCartDisplay();
-});
+      // Remove or adjust according to your payment
