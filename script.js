@@ -115,4 +115,36 @@ document.addEventListener('DOMContentLoaded', () => {
         order_id: 'order-id-' + new Date().getTime(),
         gross_amount: totalAmount, // Total amount to be paid
       },
-      // Remove or adjust according to your payment
+      // Remove or adjust according to your payment methods
+    };
+
+    // Make an API call to your backend to get a token
+    fetch('https://didactic-adventure-4jg494xw97xgc55pw-3000.app.github.dev/create_transaction', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(orderDetails),
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      if (data.token) {
+        snap.pay(data.token); // Initiate payment using Midtrans Snap
+      } else {
+        throw new Error('No token received');
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  });
+
+  // Initialize products and cart display on page load
+  displayProducts();
+  updateCartDisplay();
+});
