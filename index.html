@@ -3,21 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Your Shop</title>
+  <title>Shop</title>
   <link rel="stylesheet" href="style.css">
-  <!-- Include Midtrans SDK here -->
-  <script src="https://app.midtrans.com/snap/snap.js" data-client-key="Mid-client-JypvhVWPg953sPos"></script>
+  <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-JypvhVWPg953sPos"></script>
 </head>
 <body>
   <header>
-    <h1>Welcome to Your Shop</h1>
+    <h1>Welcome to Our Shop</h1>
   </header>
   <main>
-    <h2>Products</h2>
-    <div id="product-list">
-      <!-- Product items will be added here -->
-    </div>
-    <button id="checkout">Checkout</button>
+    <section id="product-list">
+      <!-- Products will be dynamically added here -->
+    </section>
+    <section id="cart-summary">
+      <h2>Cart Summary</h2>
+      <p id="cart-items">No items in cart</p>
+      <button id="checkout">Checkout</button>
+    </section>
   </main>
   <script src="script.js"></script>
 </body>
