@@ -55,10 +55,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (cart.length === 0) {
       cartItems.innerHTML = 'No items in cart';
     } else {
-      const cartContent = cart.map(product => `
+      // Group cart items by product
+      const groupedItems = cart.reduce((acc, product) => {
+        if (!acc[product.id]) {
+          acc[product.id] = { ...product, quantity: 0 };
+        }
+        acc[product.id].quantity += 1;
+        return acc;
+      }, {});
+
+      const cartContent = Object.values(groupedItems).map(item => `
         <div>
-          <h4>${product.name}</h4>
-          <p>Price: ${product.price}</p>
+          <h4>${item.name} x${item.quantity}</h4>
+          <p>Price: ${item.price * item.quantity}</p>
         </div>
       `).join('');
       cartItems.innerHTML = cartContent;
